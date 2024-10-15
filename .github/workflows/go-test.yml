@@ -5,9 +5,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'  # Only trigger the workflow for changes in the backend folder
   pull_request:
     branches:
       - main
+    paths:
+      - 'backend/**'  # Only trigger the workflow for PRs affecting the backend folder
 
 jobs:
   test:
@@ -38,17 +42,20 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
+        working-directory: ./backend  # Specify the backend folder
         run: go mod download
 
       # Run unit tests
       - name: Run tests
+        working-directory: ./backend  # Specify the backend folder
         run: go test ./...
 
       # Optional: Display code coverage
       - name: Generate code coverage
+        working-directory: ./backend  # Specify the backend folder
         run: go test -coverprofile=coverage.out ./...
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: coverage.out
+          file: backend/coverage.out  # Ensure correct path to coverage file

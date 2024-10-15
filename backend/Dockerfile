@@ -17,7 +17,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the rest of the application code
-COPY . .
+COPY .. .
 
 # Build the Go app with CGO enabled
 RUN go build -o instagram ./cmd/main.go

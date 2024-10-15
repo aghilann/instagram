@@ -31,7 +31,7 @@ func HandlePostPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeletePost(w http.ResponseWriter, r *http.Request) {
+func HandleDeletePost(w http.ResponseWriter, r *http.Request) {
 	db, ok := r.Context().Value(middleware.DBContextKey).(*sql.DB)
 	if !ok {
 		http.Error(w, "Database not found", http.StatusInternalServerError)
@@ -51,7 +51,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetPostByID(w http.ResponseWriter, r *http.Request) {
+func HandleGetPostById(w http.ResponseWriter, r *http.Request) {
 	postID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)

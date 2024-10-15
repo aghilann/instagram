@@ -40,18 +40,6 @@ func setupTestDB(t *testing.T) *sql.DB {
 	return db
 }
 
-func TestHandleGetUsers(t *testing.T) {
-	// This test is basic as your handler just returns a static string
-	req := httptest.NewRequest("GET", "/users", nil)
-
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlers.HandleGetUsers)
-	handler.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
-	assert.Equal(t, "GET /users", rr.Body.String())
-}
-
 func TestHandleGetUserById(t *testing.T) {
 	db := setupTestDB(t)
 	defer func(db *sql.DB) {

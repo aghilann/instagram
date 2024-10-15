@@ -11,10 +11,6 @@ import (
 	"strconv"
 )
 
-func HandleGetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("GET /users"))
-}
-
 func HandlePostUser(w http.ResponseWriter, r *http.Request) {
 	db, ok := r.Context().Value(middleware.DBContextKey).(*sql.DB)
 	if !ok {
