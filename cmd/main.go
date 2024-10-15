@@ -32,7 +32,6 @@ func main() {
 
 	// Do not protect /auth/ route (for login, registration, etc.)
 	mux.Handle("/auth/", routes.AuthRouter())
-
 	// Start the server
 	fmt.Println("Server is running on port 8080")
 	err = http.ListenAndServe(":8080", muxWithDB)
