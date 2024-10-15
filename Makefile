@@ -12,7 +12,7 @@ run: build
 # Run all Go tests
 test:
 	@echo "Running Go tests..."
-	go test ./...
+	go test -v ./test/...
 
 # Clean up the build binary
 clean:

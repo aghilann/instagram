@@ -29,6 +29,7 @@ func main() {
 	// Protect /users/ and /follow/ routes with JWTMiddleware
 	mux.Handle("/users/", middleware.JWTMiddleware(routes.UserRouter()))
 	mux.Handle("/follow/", middleware.JWTMiddleware(routes.FollowRouter()))
+	mux.Handle("/post/", middleware.JWTMiddleware(routes.PostRouter()))
 
 	// Do not protect /auth/ route (for login, registration, etc.)
 	mux.Handle("/auth/", routes.AuthRouter())
