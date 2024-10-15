@@ -55,7 +55,12 @@ func GetPostsForUser(db *sql.DB, userID int) ([]models.Post, error) {
 		return nil, fmt.Errorf("failed to get posts: %w", err)
 	}
 
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			fmt.Printf("failed to close rows: %v\n", err)
+		}
+	}(rows)
 
 	var posts []models.Post
 	for rows.Next() {
