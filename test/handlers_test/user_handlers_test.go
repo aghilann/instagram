@@ -29,14 +29,34 @@ func setupTestDB(t *testing.T) *sql.DB {
 		username TEXT NOT NULL UNIQUE,
 		email TEXT NOT NULL UNIQUE,
 		password_hash TEXT NOT NULL,
-		bio TEXT,
-		profile_image TEXT,
+		bio TEXT DEFAULT '',
+		profile_image TEXT DEFAULT '',
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`)
 	if err != nil {
-		t.Fatalf("failed to create table: %v", err)
+		t.Fatalf("failed to create table users: %v", err)
 	}
 
+	_, err = db.Exec(`CREATE TABLE follows (
+		follower_id INTEGER NOT NULL REFERENCES users(id),
+		following_id INTEGER NOT NULL REFERENCES users(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		PRIMARY KEY (follower_id, following_id)
+	)`)
+	if err != nil {
+		t.Fatalf("failed to create table follows: %v", err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE posts (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		user_id INTEGER NOT NULL,
+		image_url TEXT NOT NULL,
+		caption TEXT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)`)
+	if err != nil {
+		t.Fatalf("failed to create posts posts: %v", err)
+	}
 	return db
 }
 
@@ -62,20 +82,15 @@ func TestHandleGetUserById(t *testing.T) {
 	}(db)
 
 	// Insert a user into the database
-	user := models.User{
-		Auth: models.Auth{
-			ID:           0,
-			Username:     "tester",
-			Email:        "tester@gmail.com",
-			PasswordHash: "hashed password",
-		},
+	auth := models.Auth{
+		ID:           0,
+		Username:     "tester",
+		Email:        "tester@gmail.com",
+		PasswordHash: "hashed password",
 		Password:     "password",
-		Bio:          "",
-		ProfileImage: "",
-		CreatedAt:    time.Time{},
 	}
-	_, err := db.Exec("INSERT INTO users (username, email, password_hash, bio, profile_image) VALUES (?, ?, ?, ?, ?)",
-		user.Username, user.Email, user.PasswordHash, user.Bio, user.ProfileImage)
+	_, err := db.Exec("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+		auth.Username, auth.Email, auth.PasswordHash)
 	if err != nil {
 		t.Fatalf("failed to insert user: %v", err)
 	}
@@ -104,7 +119,12 @@ func TestHandleGetUserById(t *testing.T) {
 
 func TestHandleDeleteUserById(t *testing.T) {
 	db := setupTestDB(t)
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			t.Fatalf("failed to close database: %v", err)
+		}
+	}(db)
 
 	// Insert a user into the database
 	_, err := db.Exec("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", "testuser", "testuser@example.com", "hashedpassword")
@@ -137,7 +157,12 @@ func TestHandleDeleteUserById(t *testing.T) {
 
 func TestHandlePatchUser(t *testing.T) {
 	db := setupTestDB(t)
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			t.Fatalf("failed to close database: %v", err)
+		}
+	}(db)
 
 	// Insert a user into the database
 	_, err := db.Exec("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", "testuser", "testuser@example.com", "hashedpassword")
@@ -151,9 +176,9 @@ func TestHandlePatchUser(t *testing.T) {
 			ID:           1,
 			Username:     "updateduser",
 			Email:        "tester@gmail.com",
+			Password:     "password",
 			PasswordHash: "hashed password",
 		},
-		Password:     "password",
 		Bio:          "bio",
 		ProfileImage: "profilepic",
 		CreatedAt:    time.Now(),
