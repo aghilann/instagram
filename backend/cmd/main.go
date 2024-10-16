@@ -23,8 +23,10 @@ func main() {
 		panic(err)
 	}
 
-	// Wrap the mux with the DB middleware
-	muxWithDB := middleware.DBMiddleware(mux, db)
+	// Wrap the mux with the DB middleware, and then with the CORS middleware
+	var muxWithMiddleware http.Handler
+	muxWithMiddleware = middleware.DBMiddleware(mux, db)
+	muxWithMiddleware = middleware.CORSHandler(muxWithMiddleware)
 
 	// Protect /users/ and /follow/ routes with JWTMiddleware
 	mux.Handle("/users/", middleware.JWTMiddleware(routes.UserRouter()))
@@ -33,9 +35,9 @@ func main() {
 
 	// Do not protect /auth/ route (for login, registration, etc.)
 	mux.Handle("/auth/", routes.AuthRouter())
-	// Start the server
+
 	fmt.Println("Server is running on port 8080")
-	err = http.ListenAndServe(":8080", muxWithDB)
+	err = http.ListenAndServe(":8080", muxWithMiddleware)
 	if err != nil {
 		panic(err)
 	}
