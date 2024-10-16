@@ -32,6 +32,7 @@ func main() {
 	mux.Handle("/users/", middleware.JWTMiddleware(routes.UserRouter()))
 	mux.Handle("/follow/", middleware.JWTMiddleware(routes.FollowRouter()))
 	mux.Handle("/post/", middleware.JWTMiddleware(routes.PostRouter()))
+	mux.Handle("/comment/", middleware.JWTMiddleware(routes.CommentRouter()))
 
 	// Do not protect /auth/ route (for login, registration, etc.)
 	mux.Handle("/auth/", routes.AuthRouter())
