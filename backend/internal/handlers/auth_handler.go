@@ -61,6 +61,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	response := map[string]interface{}{
 		"token":      token,
 		"expires_at": claims.ExpiresAt.Time.Format(time.RFC3339),
+		"id":         auth.ID,
 	}
 
 	// Set the response headers and write the response

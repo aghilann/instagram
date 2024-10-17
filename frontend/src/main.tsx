@@ -1,18 +1,22 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import theme from "./theme.tsx";
-import { ThemeProvider } from '@mui/material/styles';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// src/index.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { ColorModeContextProvider } from './ColorModeContext';
+import ThemeProviderWrapper from "./ThemeProviderWrapper.tsx";
+import {CssBaseline} from "@mui/material";
 
-const queryClient = new QueryClient();
+const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement
+);
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-            <App />
-        </ThemeProvider>
-    </QueryClientProvider>
-  </StrictMode>,
-)
+root.render(
+    <React.StrictMode>
+        <ColorModeContextProvider>
+            <ThemeProviderWrapper>
+                <CssBaseline />
+                <App />
+            </ThemeProviderWrapper>
+        </ColorModeContextProvider>
+    </React.StrictMode>
+);
