@@ -26,7 +26,8 @@ func main() {
 	// Wrap the mux with the DB middleware, and then with the CORS middleware
 	var muxWithMiddleware http.Handler
 	muxWithMiddleware = middleware.DBMiddleware(mux, db)
-	muxWithMiddleware = middleware.CORSHandler(muxWithMiddleware)
+	muxWithMiddleware = middleware.CORSMiddleware(muxWithMiddleware)
+	muxWithMiddleware = middleware.LoggingMiddleware(muxWithMiddleware)
 
 	// Protect /users/ and /follow/ routes with JWTMiddleware
 	mux.Handle("/users/", middleware.JWTMiddleware(routes.UserRouter()))

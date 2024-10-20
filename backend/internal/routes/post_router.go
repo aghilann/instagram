@@ -12,6 +12,7 @@ func PostRouter() *http.ServeMux {
 	mux.HandleFunc("GET /post/user/{user_id}", handlers.HandleGetPostsForUser)
 	mux.HandleFunc("DELETE /post/{id}", handlers.HandleDeletePost)
 	mux.HandleFunc("POST /post/", handlers.HandlePostPost)
+	mux.HandleFunc("GET /post/feed/{user_id}", handlers.HandleGetFeedForUser)
 
 	return mux
 }
