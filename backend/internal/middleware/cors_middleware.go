@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func CORSHandler(next http.Handler) http.Handler {
+func CORSMiddleware(next http.Handler) http.Handler {
 	// Create a new CORS handler with permissive settings
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // Allow all origins
