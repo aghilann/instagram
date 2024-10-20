@@ -106,3 +106,31 @@ func HandleGetPostsForUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func HandleGetFeedForUser(w http.ResponseWriter, r *http.Request) {
+	userID, err := strconv.Atoi(r.PathValue("user_id"))
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	db, ok := r.Context().Value(middleware.DBContextKey).(*sql.DB)
+	if !ok {
+		http.Error(w, "Database not found", http.StatusInternalServerError)
+		return
+	}
+
+	feed, err := repositories.GetPostsForUserFeed(db, userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(feed)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
