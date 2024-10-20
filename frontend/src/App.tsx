@@ -9,6 +9,9 @@ const App: React.FC = () => {
         <Router>
             <div className="App">
                 <Routes>
+                    {/* Route for the Root URL */}
+                    <Route path="/" element={<LandingPage />} />
+
                     {/* Route for the Login Page */}
                     <Route path="/login" element={<LoginPage />} />
 
